@@ -8,7 +8,7 @@ NAME = ${MANDATORY_DIR}/philo
 INC_DIR = ${MANDATORY_DIR}
 INC_FILES = ${INC_DIR}/philo.h
 SRC_DIR = ${MANDATORY_DIR}
-SRC_FILES = ${append ${SRC_DIR}, philo.c}
+SRC_FILES = ${append ${SRC_DIR}, checked_atou.c init.c philo.c states.c}
 OBJ_DIR = ${MANDATORY_DIR}/obj
 OBJ_FILES = ${append ${OBJ_DIR}, ${notdir ${SRC_FILES:.c=.o}}}
 
