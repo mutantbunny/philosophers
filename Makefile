@@ -1,6 +1,6 @@
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g3
-LIBFLAGS =
+LIBFLAGS = -lpthread
 RM = rm -rf
 
 MANDATORY_DIR = ./philo
@@ -8,9 +8,9 @@ NAME = ${MANDATORY_DIR}/philo
 INC_DIR = ${MANDATORY_DIR}
 INC_FILES = ${INC_DIR}/philo.h
 SRC_DIR = ${MANDATORY_DIR}
-SRC_FILES = ${append ${SRC_DIR}, checked_atou.c init.c philo.c states.c}
+SRC_FILES = ${addprefix  ${SRC_DIR}/, checked_atou.c cleanup.c init.c philo.c states.c}
 OBJ_DIR = ${MANDATORY_DIR}/obj
-OBJ_FILES = ${append ${OBJ_DIR}, ${notdir ${SRC_FILES:.c=.o}}}
+OBJ_FILES = ${addprefix  ${OBJ_DIR}/, ${notdir ${SRC_FILES:.c=.o}}}
 
 all: ${NAME}
 
@@ -18,10 +18,11 @@ ${OBJ_DIR}:
 	mkdir -p ${OBJ_DIR}
 
 ${NAME}: ${OBJ_FILES}
-	${CC} ${CFLAGS} ${OBJ_FILES} -o $@
+	echo ${SRC_FILES}
+	${CC} ${CFLAGS} ${OBJ_FILES} ${LIBFLAGS} -o $@
 
 ${OBJ_DIR}/%.o: ${SRC_DIR}/%.c ${OBJ_DIR} ${INC_FILES}
-	${CC} ${CFLAGS} -I${INC_DIR} -c $< ${LIBFLAGS} -o $@
+	${CC} ${CFLAGS} -I${INC_DIR} -c $< -o $@
 
 clean:
 	${RM} OBJ_DIR

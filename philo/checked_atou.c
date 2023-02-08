@@ -6,7 +6,7 @@
 /*   By: gmachado <gmachado@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 00:55:11 by gmachado          #+#    #+#             */
-/*   Updated: 2023/01/17 01:45:56 by gmachado         ###   ########.fr       */
+/*   Updated: 2023/02/08 03:00:33 by gmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static unsigned int	get_next_positive_digit(unsigned int result,
 
 static int	ft_isspace(char c);
 
-int	ft_checked_atou(const char *nptr, unsigned int *result)
+t_error	checked_atou(const char *nptr, unsigned int *result)
 {
 	int	invalid;
 

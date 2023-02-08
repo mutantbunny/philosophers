@@ -6,13 +6,13 @@
 /*   By: gmachado <gmachado@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 01:36:59 by gmachado          #+#    #+#             */
-/*   Updated: 2023/01/17 04:14:16 by gmachado         ###   ########.fr       */
+/*   Updated: 2023/02/08 03:32:42 by gmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	save_args(t_params *params, int argc, char *argv[])
+t_error	save_args(t_params *params, int argc, char *argv[])
 {
 	if (argc < 5 || argc > 6)
 		return (ERR_PARAMS);
@@ -34,48 +34,41 @@ int	save_args(t_params *params, int argc, char *argv[])
 	return (OK);
 }
 
-int	alloc_structs(t_philo **philos, pthread_mutex_t **forks, unsigned int np)
-{
-	*philos = malloc(np * sizeof(**philos));
-	*forks = malloc(np * sizeof(**forks));
-	if (philos == NULL || forks == NULL)
-	{
-		free(*philos);
-		free(*forks);
-		return(ERR_ALLOC);
-	}
-	return(OK);
-}
-
-int	init_forks(unsigned int num_philos, pthread_mutex_t **forks)
+t_error	init_forks(unsigned int num_forks, t_fork **forks)
 {
 	unsigned int	idx;
 
+	*forks = malloc(num_forks * sizeof(**forks));
+	if (*forks == NULL)
+		return(ERR_ALLOC);
 	idx = 0;
-	while (idx < num_philos)
+	while (idx < num_forks)
 	{
-		if (pthread_mutex_init(forks[idx], NULL))
+		if (pthread_mutex_init(&((*forks)[idx].mutex), NULL))
 			return (ERR_MUTEX);
+		(*forks)[idx].taken = FALSE;
 		idx++;
 	}
 	return (OK);
 }
 
-int	init_philos(unsigned int num_philos, t_philo **philos,
-				pthread_mutex_t **forks)
+t_error	init_philos(unsigned int num_philos, t_philo **philos,
+				t_fork **forks)
 {
 	unsigned int	idx;
-	const
 
+	*philos = malloc(num_philos * sizeof(**philos));
+	if (philos == NULL)
+		return(ERR_ALLOC);
 	idx = 0;
 	while (idx < num_philos)
 	{
-		philos[idx]->position = idx;
-		philos[idx]->state = ST_NO_FORK;
-		philos[idx]->left_fork = forks[idx];
-		philos[idx]->right_fork = forks[(idx + 1) % num_philos];
-		if (pthread_create(&(philos[idx]->thread), NULL,
-			philo_handler, philos[idx]))
+		(*philos)[idx].position = idx;
+		(*philos)[idx].state = ST_NO_FORK;
+		(*philos)[idx].left_fork = &((*forks)[idx]);
+		(*philos)[idx].right_fork = &((*forks)[(idx + 1) % num_philos]);
+		if (pthread_create(&((*philos)[idx].thread), NULL,
+			philo_handler, &(*philos)[idx]))
 			return (ERR_THREAD);
 		idx++;
 	}

@@ -6,7 +6,7 @@
 /*   By: gmachado <gmachado@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 01:41:40 by gmachado          #+#    #+#             */
-/*   Updated: 2023/01/17 02:40:51 by gmachado         ###   ########.fr       */
+/*   Updated: 2023/02/08 03:13:58 by gmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,15 +46,27 @@ typedef enum e_state
 	ST_DEAD
 }	t_state;
 
+typedef enum e_bool
+{
+	FALSE,
+	TRUE
+} t_bool;
+
+typedef struct s_fork
+{
+	pthread_mutex_t	mutex;
+	t_bool			taken;
+} t_fork;
+
 typedef struct s_philo
 {
-	int				position;
-	pthread_t		thread;
-	t_state			state;
-	pthread_mutex_t	*left_fork;
-	pthread_mutex_t	*right_fork;
-	suseconds_t		last_meal_ts;
-	suseconds_t		st_start_ts;
+	int			position;
+	pthread_t	thread;
+	t_state		state;
+	t_fork		*left_fork;
+	t_fork		*right_fork;
+	suseconds_t	last_meal_ts;
+	suseconds_t	st_start_ts;
 }	t_philo;
 
 typedef struct s_params
@@ -66,16 +78,18 @@ typedef struct s_params
 	unsigned int	num_meals;
 }	t_params;
 
-// ft_checked_atoi.c
-int	checked_atou(const char *nptr, unsigned int *result);
+// checked_atoi.c
+t_error	checked_atou(const char *nptr, unsigned int *result);
+
+//cleanup.c
+void	cleanup(t_philo *philos, t_fork *forks);
+t_error	handle_error(t_error err, t_philo *philos, t_fork *forks);
 
 // init.c
-int		save_args(t_params *params, int argc, char *argv[]);
-int		alloc_structs(t_philo **philos, pthread_mutex_t **forks,
-						unsigned int np);
-int		init_forks(unsigned int num_philos, pthread_mutex_t **forks);
-int		init_philos(unsigned int num_philos, t_philo **philos,
-					pthread_mutex_t **forks);
+t_error	save_args(t_params *params, int argc, char *argv[]);
+t_error	init_forks(unsigned int num_philos, t_fork **forks);
+t_error	init_philos(unsigned int num_philos, t_philo **philos,
+					t_fork **forks);
 
 // states.c
 void	*philo_handler(void *arg);
